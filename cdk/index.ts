@@ -1,7 +1,7 @@
 import { App, Construct, Duration, RemovalPolicy, Stack } from '@aws-cdk/core';
 import { Topic } from '@aws-cdk/aws-sns';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
-import { Runtime } from '@aws-cdk/aws-lambda';
+import { Architecture } from '@aws-cdk/aws-lambda';
 import { PolicyStatement } from '@aws-cdk/aws-iam';
 import { ComparisonOperator, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
 import { LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
@@ -32,7 +32,6 @@ const okTopic = topicFromName(stack, 'OkTopic', 'ok-topic');
 
 const handler = new NodejsFunction(stack, 'Handler', {
   entry: 'src/index.ts',
-  runtime: Runtime.NODEJS_14_X,
   bundling: {
     minify: true,
     sourceMap: true,
@@ -43,9 +42,7 @@ const handler = new NodejsFunction(stack, 'Handler', {
     ALARM_ACTIONS: alarmTopic?.topicArn || '',
     OK_ACTIONS: okTopic?.topicArn || '',
   },
-});
-
-handler.configureAsyncInvoke({
+  architecture: Architecture.ARM_64,
   maxEventAge: Duration.minutes(1),
   retryAttempts: 0,
 });

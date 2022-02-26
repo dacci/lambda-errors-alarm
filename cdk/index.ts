@@ -1,13 +1,14 @@
-import { App, Construct, Duration, RemovalPolicy, Stack } from '@aws-cdk/core';
-import { Topic } from '@aws-cdk/aws-sns';
-import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
-import { Architecture } from '@aws-cdk/aws-lambda';
-import { PolicyStatement } from '@aws-cdk/aws-iam';
-import { ComparisonOperator, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
-import { LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
-import { Rule } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
+import { App, ArnFormat, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { ComparisonOperator, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
+import { Rule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Architecture } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { Construct } from 'constructs';
 
 const app = new App();
 
@@ -56,8 +57,8 @@ handler.addToRolePolicy(new PolicyStatement({
     stack.formatArn({
       service: 'cloudwatch',
       resource: 'alarm',
-      sep: ':',
       resourceName: '*',
+      arnFormat: ArnFormat.COLON_RESOURCE_NAME,
     }),
   ],
 }));

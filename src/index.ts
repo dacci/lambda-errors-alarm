@@ -1,19 +1,19 @@
 import { CloudWatch } from 'aws-sdk';
 
-const split = (value?: string) => value ? value.split(',') : undefined;
+const split = (value?: string) => value?.split(',');
 const OK_ACTIONS = split(process.env.OK_ACTIONS);
 const ALARM_ACTIONS = split(process.env.ALARM_ACTIONS);
 
 export const cloudWatch = new CloudWatch();
 
-export async function handler(event: any): Promise<any> {
+export async function handler(event: any): Promise<void> {
   if (event.detail.errorCode) return;
 
   const alarmName = `${event.detail.requestParameters.functionName}/Errors`;
 
   switch (event.detail.eventName) {
     case 'CreateFunction20150331':
-      return cloudWatch
+      await cloudWatch
         .putMetricAlarm({
           AlarmName: alarmName,
           OKActions: OK_ACTIONS,
@@ -33,15 +33,19 @@ export async function handler(event: any): Promise<any> {
           ComparisonOperator: 'GreaterThanThreshold',
           TreatMissingData: 'notBreaching',
         })
-        .promise();
+        .promise()
+        .catch((reason) => console.error(JSON.stringify(reason)));
+      break;
 
     case 'DeleteFunction20150331':
-      return cloudWatch
+      await cloudWatch
         .deleteAlarms({
           AlarmNames: [
             alarmName,
           ],
         })
-        .promise();
+        .promise()
+        .catch((reason) => console.error(JSON.stringify(reason)));
+      break;
   }
 }

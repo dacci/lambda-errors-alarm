@@ -1154,10 +1154,10 @@ aws-cdk-lib@2.14.0:
     semver "^7.3.5"
     yaml "1.10.2"
 
-aws-cdk@2.14.0:
-  version "2.14.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.14.0.tgz#34f67494eb78aca24a920464f625e7fd7dae1f32"
-  integrity sha512-JtAojkiGohbUxQjEa9k0P4Dk4IdNDLbd7S9ValpuTjoJN51+8/E34i+jUd7Fsl7bmaS/gxLafJsbJjnlBLg5cg==
+aws-cdk@2.17.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.17.0.tgz#cb9149c55f1bec54eacfe0242d3454faf4292e2e"
+  integrity sha512-gRPPpTONOjtQ40A8sc2SzXPGDzFlVbSPPts1pjOx4VBJ2S91A0ON3Fkby+XX/Xqdo1GITTWAk5Va4PnoYyUhmA==
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -1440,9 +1440,9 @@ concat-map@0.0.1:
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
 constructs@^10.0.0:
-  version "10.0.73"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-10.0.73.tgz#1279267ee281c7a9facb2df377fe587c697df562"
-  integrity sha512-LFZayHj5o8SIjCd1O7fL3W+PkYjyB5YJo2mStPz+nIipGB78smhEklzm6Xx4ZGQ1QmSpvI1lTiepgZPBn+GP3w==
+  version "10.0.91"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-10.0.91.tgz#ec1e34d7aca3ce034b17e3003ee8f2903e0cdf77"
+  integrity sha512-4sDyF/vMNZywVcOpo+ZrJt4F7X0iLVE+D6KxHn+/UnsmUr4ICa4KzXHVvCtoReyM8G1Q4aOFK+AWQICn+QSK0w==
 
 convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   version "1.8.0"

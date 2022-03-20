@@ -1,7 +1,6 @@
 import { CloudWatch } from 'aws-sdk';
 
 const split = (value?: string) => value?.split(',');
-const OK_ACTIONS = split(process.env.OK_ACTIONS);
 const ALARM_ACTIONS = split(process.env.ALARM_ACTIONS);
 
 export const cloudWatch = new CloudWatch();
@@ -16,7 +15,6 @@ export async function handler(event: any): Promise<void> {
       await cloudWatch
         .putMetricAlarm({
           AlarmName: alarmName,
-          OKActions: OK_ACTIONS,
           AlarmActions: ALARM_ACTIONS,
           MetricName: 'Errors',
           Namespace: 'AWS/Lambda',

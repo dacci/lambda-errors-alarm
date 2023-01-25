@@ -1,9 +1,9 @@
-import { CloudWatch } from 'aws-sdk';
+import { CloudWatchClient, DeleteAlarmsCommand, PutMetricAlarmCommand } from '@aws-sdk/client-cloudwatch';
 
 const split = (value?: string) => value?.split(',');
 const ALARM_ACTIONS = split(process.env.ALARM_ACTIONS);
 
-export const cloudWatch = new CloudWatch();
+const cloudWatch = new CloudWatchClient({});
 
 export async function handler(event: any): Promise<void> {
   if (event.detail.errorCode) return;
@@ -13,7 +13,7 @@ export async function handler(event: any): Promise<void> {
   switch (event.detail.eventName) {
     case 'CreateFunction20150331':
       await cloudWatch
-        .putMetricAlarm({
+        .send(new PutMetricAlarmCommand({
           AlarmName: alarmName,
           AlarmActions: ALARM_ACTIONS,
           MetricName: 'Errors',
@@ -30,19 +30,17 @@ export async function handler(event: any): Promise<void> {
           Threshold: 0,
           ComparisonOperator: 'GreaterThanThreshold',
           TreatMissingData: 'notBreaching',
-        })
-        .promise()
+        }))
         .catch((reason) => console.error(JSON.stringify(reason)));
       break;
 
     case 'DeleteFunction20150331':
       await cloudWatch
-        .deleteAlarms({
+        .send(new DeleteAlarmsCommand({
           AlarmNames: [
             alarmName,
           ],
-        })
-        .promise()
+        }))
         .catch((reason) => console.error(JSON.stringify(reason)));
       break;
   }

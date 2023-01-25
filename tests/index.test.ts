@@ -1,13 +1,18 @@
-import { cloudWatch, handler } from '../src';
+import { CloudWatchClient, DeleteAlarmsCommand, PutMetricAlarmCommand } from '@aws-sdk/client-cloudwatch';
+import { mockClient } from 'aws-sdk-client-mock';
+import 'aws-sdk-client-mock-jest';
+import { handler } from '../src';
 
-jest.mock('aws-sdk');
+const cloudWatch = mockClient(CloudWatchClient);
+beforeEach(() => {
+  cloudWatch.reset();
+});
 
 describe('Lambda handler', () => {
   it('Function created', async () => {
-    cloudWatch.putMetricAlarm = jest.fn().mockReturnValue({
-      promise: () => Promise.resolve(),
-    });
-    cloudWatch.deleteAlarms = jest.fn();
+    cloudWatch
+      .on(PutMetricAlarmCommand)
+      .resolves({});
 
     await handler({
       detail: {
@@ -18,14 +23,14 @@ describe('Lambda handler', () => {
       },
     });
 
-    expect(cloudWatch.putMetricAlarm).toBeCalled();
-    expect(cloudWatch.deleteAlarms).not.toBeCalled();
+    expect(cloudWatch).toHaveReceivedCommand(PutMetricAlarmCommand);
+    expect(cloudWatch).not.toHaveReceivedCommand(DeleteAlarmsCommand);
   });
 
   it('putMetricAlarm failed', async () => {
-    cloudWatch.putMetricAlarm = jest.fn().mockReturnValue({
-      promise: () => Promise.reject(),
-    });
+    cloudWatch
+      .on(PutMetricAlarmCommand)
+      .rejects();
 
     const result = await handler({
       detail: {
@@ -36,15 +41,14 @@ describe('Lambda handler', () => {
       },
     });
 
-    expect(cloudWatch.putMetricAlarm).toBeCalled();
+    expect(cloudWatch).toHaveReceivedCommand(PutMetricAlarmCommand);
     expect(result).toBeUndefined();
   });
 
   it('Function deleted', async () => {
-    cloudWatch.putMetricAlarm = jest.fn();
-    cloudWatch.deleteAlarms = jest.fn().mockReturnValue({
-      promise: () => Promise.resolve(),
-    });
+    cloudWatch
+      .on(DeleteAlarmsCommand)
+      .resolves({});
 
     await handler({
       detail: {
@@ -55,14 +59,14 @@ describe('Lambda handler', () => {
       },
     });
 
-    expect(cloudWatch.putMetricAlarm).not.toBeCalled();
-    expect(cloudWatch.deleteAlarms).toBeCalled();
+    expect(cloudWatch).not.toHaveReceivedCommand(PutMetricAlarmCommand);
+    expect(cloudWatch).toHaveReceivedCommand(DeleteAlarmsCommand);
   });
 
   it('deleteAlarms failed', async () => {
-    cloudWatch.deleteAlarms = jest.fn().mockReturnValue({
-      promise: () => Promise.reject(),
-    });
+    cloudWatch
+      .on(DeleteAlarmsCommand)
+      .rejects();
 
     const result = await handler({
       detail: {
@@ -73,14 +77,11 @@ describe('Lambda handler', () => {
       },
     });
 
-    expect(cloudWatch.deleteAlarms).toBeCalled();
+    expect(cloudWatch).toHaveReceivedCommand(DeleteAlarmsCommand);
     expect(result).toBeUndefined();
   });
 
   it('Function updated', async () => {
-    cloudWatch.putMetricAlarm = jest.fn();
-    cloudWatch.deleteAlarms = jest.fn();
-
     await handler({
       detail: {
         eventName: 'UpdateFunction20150331',
@@ -90,21 +91,18 @@ describe('Lambda handler', () => {
       },
     });
 
-    expect(cloudWatch.putMetricAlarm).not.toBeCalled();
-    expect(cloudWatch.deleteAlarms).not.toBeCalled();
+    expect(cloudWatch).not.toHaveReceivedCommand(PutMetricAlarmCommand);
+    expect(cloudWatch).not.toHaveReceivedCommand(DeleteAlarmsCommand);
   });
 
   it('Failed event', async () => {
-    cloudWatch.putMetricAlarm = jest.fn();
-    cloudWatch.deleteAlarms = jest.fn();
-
     await handler({
       detail: {
         errorCode: 'AccessDenied',
       },
     });
 
-    expect(cloudWatch.putMetricAlarm).not.toBeCalled();
-    expect(cloudWatch.deleteAlarms).not.toBeCalled();
+    expect(cloudWatch).not.toHaveReceivedCommand(PutMetricAlarmCommand);
+    expect(cloudWatch).not.toHaveReceivedCommand(DeleteAlarmsCommand);
   });
 });

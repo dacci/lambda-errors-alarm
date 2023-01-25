@@ -4,7 +4,7 @@ import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Architecture } from 'aws-cdk-lib/aws-lambda';
+import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Topic } from 'aws-cdk-lib/aws-sns';
@@ -19,6 +19,7 @@ const topic = new Topic(stack, 'Topic');
 
 const handler = new NodejsFunction(stack, 'Handler', {
   entry: 'src/index.ts',
+  runtime: Runtime.NODEJS_18_X,
   bundling: {
     minify: true,
     sourceMap: true,
